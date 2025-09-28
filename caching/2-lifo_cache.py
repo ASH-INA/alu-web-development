@@ -28,7 +28,7 @@ class LIFOCache(BaseCaching):
         """
         if key is not None and item is not None:
             # If cache is full and key is new, remove last inserted item
-            if (len(self.cache_data) >= BaseCaching.MAX_ITEMS 
+            if (len(self.cache_data) >= BaseCaching.MAX_ITEMS
         and key not in self.cache_data):
                 last_key = self.keys_stack[-1]
                 print(f"DISCARD: {last_key}")
