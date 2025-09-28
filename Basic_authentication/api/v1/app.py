@@ -48,7 +48,7 @@ def not_found(error) -> str:
 
 @app.errorhandler(401)
 def unauthorized(error) -> str:
-    """ 
+    """
     401 Unauthorized Error Handler
 
     Handles all 401 Unauthorized errors that occur when 
