@@ -3,7 +3,8 @@
 Route module for the API
 
 This is the main application module that configures and runs the Flask API.
-It sets up CORS, registers blueprints, and defines error handlers for the application.
+It sets up CORS, registers blueprints, and defines
+error handlers for the application.
 """
 
 from os import getenv
@@ -36,7 +37,7 @@ def not_found(error) -> str:
 
     Returns:
         JSON: A JSON error response with 404 status code
-        
+
     Example Response:
         {
             "error": "Not found"
@@ -50,7 +51,8 @@ def unauthorized(error) -> str:
     """ 
     401 Unauthorized Error Handler
 
-    Handles all 401 Unauthorized errors that occur when authentication is required
+    Handles all 401 Unauthorized errors that occur when 
+    authentication is required
     but not provided or invalid.
 
     Args:
