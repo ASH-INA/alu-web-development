@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" 
+"""
 Module of Index views
 
 This module contains the blueprint routes for the API index endpoints.
@@ -12,7 +12,7 @@ from api.v1.views import app_views
 
 @app_views.route('/status', methods=['GET'], strict_slashes=False)
 def status() -> str:
-    """ 
+    """
     GET /api/v1/status
 
     Endpoint to check the API status and ensure it's running properly.
@@ -30,7 +30,7 @@ def status() -> str:
 
 @app_views.route('/stats/', strict_slashes=False)
 def stats() -> str:
-    """ 
+    """
     GET /api/v1/stats
 
     Endpoint to retrieve statistics about the objects in the database.
@@ -62,6 +62,7 @@ def unauthorized() -> str:
         401: Unauthorized error using Flask's abort function
 
     Note:
-        This endpoint will always return a 401 error and is meant for testing purposes only.
+        This endpoint will always return a 401 error and is 
+        meant for testing purposes only.
     """
     abort(401)
