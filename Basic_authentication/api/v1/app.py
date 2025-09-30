@@ -1,27 +1,14 @@
 #!/usr/bin/env python3
-"""
-Route module for the API
-
-This is the main application module that configures and runs the Flask API.
-It sets up CORS, registers blueprints, and defines
-error handlers for the application.
-"""
-
-from os import getenv
-from api.v1.views import app_views
-from flask import Flask, jsonify, abort, request
-from flask_cors import (CORS, cross_origin)
+""" Flask app module """
+from flask import Flask, jsonify, abort, request  # Added request import
+from flask_cors import CORS
 import os
 
+from api.v1.views import app_views
+from api.v1.auth.auth import Auth
 
-# Create Flask application instance
 app = Flask(__name__)
-
-# Register the blueprint containing all API routes
 app.register_blueprint(app_views)
-
-# Configure CORS (Cross-Origin Resource Sharing)
-# Allows requests from any origin to API routes under /api/v1/*
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
 # Initialize auth variable
@@ -34,70 +21,26 @@ if auth_type == 'basic_auth':
     from api.v1.auth.basic_auth import BasicAuth
     auth = BasicAuth()
 elif auth_type == 'auth':
-    from api.v1.auth.auth import Auth
     auth = Auth()
-
 
 @app.errorhandler(404)
 def not_found(error) -> str:
-    """
-    404 Not Found Error Handler
-
-    Handles all 404 errors that occur when a route is not found.
-
-    Args:
-        error: The error object passed by Flask
-
-    Returns:
-        JSON: A JSON error response with 404 status code
-
-    Example Response:
-        {
-            "error": "Not found"
-        }
-    """
+    """ Not found handler """
     return jsonify({"error": "Not found"}), 404
-
 
 @app.errorhandler(401)
 def unauthorized(error) -> str:
-    """
-    401 Unauthorized Error Handler
-
-    Handles all 401 Unauthorized errors that occur when]
-    authentication is required
-    but not provided or invalid.
-
-    Args:
-        error: The error object passed by Flask
-
-    Returns:
-        JSON: A JSON error response with 401 status code
-
-    Example Response:
-        {
-            "error": "Unauthorized"
-        }
-    """
+    """ Unauthorized handler """
     return jsonify({"error": "Unauthorized"}), 401
-
 
 @app.errorhandler(403)
 def forbidden(error) -> str:
-    """
-    Forbidden handler
-    """
+    """ Forbidden handler """
     return jsonify({"error": "Forbidden"}), 403
-
 
 @app.before_request
 def before_request():
-    """
-    Filter each request before processing
-
-    This function is executed before each request to check authentication
-    requirements.
-    """
+    """Filter each request before processing"""
     if auth is None:
         return
 
@@ -120,15 +63,7 @@ def before_request():
     if auth.current_user(request) is None:
         abort(403)
 
-
 if __name__ == "__main__":
-    """
-    Main execution block - runs the Flask development server.
-
-    The server host and port can be configured through environment variables:
-    - API_HOST: Host address (default: "0.0.0.0")
-    - API_PORT: Port number (default: "5000")
-    """
-    host = getenv("API_HOST", "0.0.0.0")
-    port = getenv("API_PORT", "5000")
+    host = os.getenv("API_HOST", "0.0.0.0")
+    port = os.getenv("API_PORT", "5000")
     app.run(host=host, port=port)
