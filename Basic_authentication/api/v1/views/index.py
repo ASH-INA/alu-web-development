@@ -62,7 +62,7 @@ def unauthorized() -> str:
         401: Unauthorized error using Flask's abort function
 
     Note:
-        This endpoint will always return a 401 error and is 
+        This endpoint will always return a 401 error and is
         meant for testing purposes only.
     """
     abort(401)

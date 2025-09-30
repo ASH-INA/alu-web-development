@@ -27,7 +27,7 @@ CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
 @app.errorhandler(404)
 def not_found(error) -> str:
-    """ 
+    """
     404 Not Found Error Handler
 
     Handles all 404 errors that occur when a route is not found.
@@ -51,7 +51,7 @@ def unauthorized(error) -> str:
     """
     401 Unauthorized Error Handler
 
-    Handles all 401 Unauthorized errors that occur when 
+    Handles all 401 Unauthorized errors that occur when
     authentication is required
     but not provided or invalid.
 
