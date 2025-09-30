@@ -55,5 +55,5 @@ class BasicAuth(Auth):
             return None, None
 
         # Split on the first colon only (in case password contains colons)
-        user_email, password = decoded_base64_authorization_header.split(':', 1)
-        return user_email, password
+        user_email, passwor = decoded_base64_authorization_header.split(':', 1)
+        return user_email, passwor
