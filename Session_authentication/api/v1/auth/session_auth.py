@@ -2,8 +2,34 @@
 """ SessionAuth class
 """
 from api.v1.auth.auth import Auth
+import uuid
+from typing import TypeVar
 
 
 class SessionAuth(Auth):
     """Session authentication class"""
-    pass
+
+    user_id_by_session_id = {}
+
+    def create_session(self, user_id: str = None) -> str:
+        """Create a Session ID for a user_id
+
+        Args:
+            user_id: User ID to create session for
+
+        Returns:
+            Session ID if successful, None otherwise
+        """
+        if user_id is None:
+            return None
+
+        if not isinstance(user_id, str):
+            return None
+
+        # Generate Session ID using uuid4
+        session_id = str(uuid.uuid4())
+
+        # Store user_id with session_id as key
+        self.user_id_by_session_id[session_id] = user_id
+
+        return session_id
