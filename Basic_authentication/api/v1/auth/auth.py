@@ -14,7 +14,7 @@ class Auth:
         Args:
             path: The path to check
             excluded_paths: List of paths that don't require authentication
-            
+
         Returns:
             False for now (will be implemented later)
         """
