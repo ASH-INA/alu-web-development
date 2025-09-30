@@ -46,7 +46,12 @@ class BasicAuth(Auth):
             return None, None
         if ':' not in decoded_base64_authorization_header:
             return None, None
+        
+        # Split on the first colon only to handle passwords with colons
         parts = decoded_base64_authorization_header.split(':', 1)
+        if len(parts) != 2:
+            return None, None
+        
         return parts[0], parts[1]
 
     def user_object_from_credentials(
@@ -58,16 +63,19 @@ class BasicAuth(Auth):
         if user_pwd is None or not isinstance(user_pwd, str):
             return None
 
-        # Search for user by email
-        users = User.search({'email': user_email})
-        if not users or len(users) == 0:
-            return None
+        try:
+            # Search for user by email
+            users = User.search({'email': user_email})
+            if not users or len(users) == 0:
+                return None
 
-        user = users[0]
-        if not user.is_valid_password(user_pwd):
-            return None
+            user = users[0]
+            if not user.is_valid_password(user_pwd):
+                return None
 
-        return user
+            return user
+        except Exception:
+            return None
 
     def current_user(self, request=None) -> TypeVar('User'):
         """Get User instance for a request using Basic Authentication"""
