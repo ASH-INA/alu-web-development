@@ -46,12 +46,12 @@ class BasicAuth(Auth):
             return None, None
         if ':' not in decoded_base64_authorization_header:
             return None, None
-        
+
         # Split on the first colon only to handle passwords with colons
         parts = decoded_base64_authorization_header.split(':', 1)
         if len(parts) != 2:
             return None, None
-        
+
         return parts[0], parts[1]
 
     def user_object_from_credentials(
