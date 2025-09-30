@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """ Flask app module """
-from flask import Flask, jsonify, abort, request  # Added request import
+from flask import Flask, jsonify, abort, request
 from flask_cors import CORS
 import os
 
@@ -63,9 +63,13 @@ def before_request():
     if auth.authorization_header(request) is None:
         abort(401)
 
-    # Check for current user (will always return None for now)
-    if auth.current_user(request) is None:
+    # Get current user and assign to request
+    current_user = auth.current_user(request)
+    if current_user is None:
         abort(403)
+
+    # Assign current_user to request object
+    request.current_user = current_user
 
 
 if __name__ == "__main__":
