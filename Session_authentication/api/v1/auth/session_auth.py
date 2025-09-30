@@ -16,7 +16,7 @@ class SessionAuth(Auth):
 
         Args:
             user_id: User ID to create session for
-   
+
         Returns:
             Session ID if successful, None otherwise
         """
