@@ -7,12 +7,13 @@ from sqlalchemy.orm import sessionmaker
 
 from user import Base, User
 
+
 class DB:
     """Database class for handling user operations"""
 
     def __init__(self):
         """Initialize database connection and create tables"""
-        self._engine = create_engine("sqlite:///a.db", echo=True)
+        self._engine = create_engine("sqlite:///a.db")  # REMOVED: echo=True
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
@@ -26,7 +27,15 @@ class DB:
         return self.__session
 
     def add_user(self, email: str, hashed_password: str) -> User:
-        """Add a new user to the database"""
+        """Add a new user to the database
+
+        Args:
+            email: User's email address
+            hashed_password: Hashed password for the user
+
+        Returns:
+            User object that was created
+        """
         new_user = User(email=email, hashed_password=hashed_password)
         self._session.add(new_user)
         self._session.commit()
