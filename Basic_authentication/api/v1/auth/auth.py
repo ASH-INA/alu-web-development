@@ -9,7 +9,9 @@ import os
 class Auth:
     """Template for all authentication systems"""
 
-    def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
+    def require_auth(
+        self, path: str, excluded_paths: List[str]
+    ) -> bool:
         """Determine if authentication is required
 
         Args:
@@ -51,7 +53,9 @@ class Auth:
         # If path not found in excluded_paths, return True (requires auth)
         return True
 
-    def authorization_header(self, request=None) -> str:
+    def authorization_header(
+        self, request=None
+    ) -> str:
         """Get the authorization header from the request
 
         Args:
@@ -66,7 +70,9 @@ class Auth:
         # Return the Authorization header value if it exists
         return request.headers.get('Authorization', None)
 
-    def current_user(self, request=None) -> TypeVar('User'):
+    def current_user(
+        self, request=None
+    ) -> TypeVar('User'):
         """Get the current user from the request
 
         Args:
@@ -89,8 +95,8 @@ class Auth:
         if request is None:
             return None
 
-        # Get session name from environment variable, default to _my_session_id
+        # Get session name from environment variable
         session_name = os.getenv('SESSION_NAME', '_my_session_id')
 
-        # Use .get() to safely access the cookie value
+        # Use .get() to safely access the cookie
         return request.cookies.get(session_name)
