@@ -4,8 +4,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.exc import IntegrityError, InvalidRequestError
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import IntegrityError
 
 from user import Base, User
 
@@ -38,41 +37,11 @@ class DB:
         Returns:
             User object that was created
         """
-        try:
-            # Create new user instance
-            new_user = User(email=email, hashed_password=hashed_password)
+        # Create new user instance
+        new_user = User(email=email, hashed_password=hashed_password)
 
-            # Add to session and commit
-            self._session.add(new_user)
-            self._session.commit()
-
-            return new_user
-        except IntegrityError:
-            # Rollback in case of error
-            self._session.rollback()
-            raise
-
-    def find_user_by(self, **kwargs) -> User:
-        """Find a user by arbitrary keyword arguments
-
-        Args:
-            **kwargs: Arbitrary keyword arguments for filtering
-
-        Returns:
-            User object if found
-
-        Raises:
-            NoResultFound: When no user is found
-            InvalidRequestError: When wrong query arguments are passed
-        """
-        try:
-            # Query the users table with the provided filters
-            user = self._session.query(User).filter_by(**kwargs).first()
-
-            if user is None:
-                raise NoResultFound("No user found with the given criteria")
-
-            return user
-        except InvalidRequestError:
-            # Re-raise InvalidRequestError for wrong query arguments
-            raise InvalidRequestError("Invalid query arguments")
+        # Add to session and commit
+        self._session.add(new_user)
+        self._session.commit()
+        
+        return new_user
