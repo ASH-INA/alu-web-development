@@ -35,7 +35,7 @@ class Auth:
 
         Returns:
             User object if registration successful
-
+            
         Raises:
             ValueError: If user already exists with the given email
         """
