@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ Basic Flask app for user authentication service
 """
-from flask import Flask, jsonify, request, abort, make_response
+from flask import Flask, jsonify, request, abort, make_response, redirect
 from auth import Auth
 
 app = Flask(__name__)
@@ -71,8 +71,33 @@ def login() -> str:
 
     # Set session cookie
     response.set_cookie('session_id', session_id)
-
+    
     return response
+
+
+@app.route('/sessions', methods=['DELETE'], strict_slashes=False)
+def logout() -> str:
+    """User logout route
+
+    Returns:
+        Redirect to home page or 403 error
+    """
+    session_id = request.cookies.get('session_id')
+
+    if not session_id:
+        abort(403)
+
+    # Find user by session ID
+    user = AUTH.get_user_from_session_id(session_id)
+
+    if user:
+        # Destroy the session
+        AUTH.destroy_session(user.id)
+        # Redirect to home page
+        return redirect('/')
+    else:
+        # User not found
+        abort(403)
 
 
 if __name__ == "__main__":
