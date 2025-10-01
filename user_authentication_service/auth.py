@@ -104,7 +104,7 @@ class Auth:
 
             # Update user's session_id in database
             self._db.update_user(user.id, session_id=session_id)
-            
+
             return session_id
 
         except NoResultFound:
