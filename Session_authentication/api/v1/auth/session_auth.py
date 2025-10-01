@@ -1,79 +1,49 @@
 #!/usr/bin/env python3
-""" SessionAuth class
+""" Session Authentication views
 """
-from api.v1.auth.auth import Auth
-import uuid
-from typing import TypeVar
+from flask import jsonify, request, make_response
+from api.v1.views import app_views
 from models.user import User
+import os
 
 
-class SessionAuth(Auth):
-    """Session authentication class"""
+@app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
+def login():
+    """Handle user login and create session"""
+    # Get email and password from form data
+    email = request.form.get('email')
+    password = request.form.get('password')
 
-    user_id_by_session_id = {}
+    # Check if email is missing or empty
+    if email is None or email == '':
+        return jsonify({"error": "email missing"}), 400
 
-    def create_session(self, user_id: str = None) -> str:
-        """Create a Session ID for a user_id
+    # Check if password is missing or empty
+    if password is None or password == '':
+        return jsonify({"error": "password missing"}), 400
 
-        Args:
-            user_id: User ID to create session for
+    # Search for user by email
+    users = User.search({'email': email})
+    if not users or len(users) == 0:
+        return jsonify({"error": "no user found for this email"}), 404
 
-        Returns:
-            Session ID if successful, None otherwise
-        """
-        if user_id is None:
-            return None
+    user = users[0]
 
-        if not isinstance(user_id, str):
-            return None
+    # Check if password is valid
+    if not user.is_valid_password(password):
+        return jsonify({"error": "wrong password"}), 401
 
-        # Generate Session ID using uuid4
-        session_id = str(uuid.uuid4())
+    # Import auth here to avoid circular imports
+    from api.v1.app import auth
 
-        # Store user_id with session_id as key
-        self.user_id_by_session_id[session_id] = user_id
+    # Create session for user
+    session_id = auth.create_session(user.id)
 
-        return session_id
+    # Create response with user data
+    response = make_response(user.to_json())
 
-    def user_id_for_session_id(self, session_id: str = None) -> str:
-        """Get User ID based on Session ID
+    # Set session cookie
+    session_name = os.getenv('SESSION_NAME', '_my_session_id')
+    response.set_cookie(session_name, session_id)
 
-        Args:
-            session_id: Session ID to look up
-
-        Returns:
-            User ID if session exists, None otherwise
-        """
-        if session_id is None:
-            return None
-
-        if not isinstance(session_id, str):
-            return None
-
-        # Use .get() to safely retrieve user_id from dictionary
-        return self.user_id_by_session_id.get(session_id)
-
-    def current_user(self, request=None):
-        """Get User instance based on session cookie
-
-        Args:
-            request: The Flask request object
-
-        Returns:
-            User instance if found, None otherwise
-        """
-        if request is None:
-            return None
-
-        # Get session ID from cookie
-        session_id = self.session_cookie(request)
-        if session_id is None:
-            return None
-
-        # Get user ID from session ID
-        user_id = self.user_id_for_session_id(session_id)
-        if user_id is None:
-            return None
-
-        # Get User instance from database
-        return User.get(user_id)
+    return response
