@@ -4,10 +4,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.exc import IntegrityError
 
 from user import Base, User
-
 
 class DB:
     """Database class for handling user operations"""
@@ -28,20 +26,8 @@ class DB:
         return self.__session
 
     def add_user(self, email: str, hashed_password: str) -> User:
-        """Add a new user to the database
-
-        Args:
-            email: User's email address
-            hashed_password: Hashed password for the user
-
-        Returns:
-            User object that was created
-        """
-        # Create new user instance
+        """Add a new user to the database"""
         new_user = User(email=email, hashed_password=hashed_password)
-
-        # Add to session and commit
         self._session.add(new_user)
         self._session.commit()
-
         return new_user
