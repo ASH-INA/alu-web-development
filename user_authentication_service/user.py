@@ -6,7 +6,6 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
-
 class User(Base):
     """User class for storing user data in database"""
 
@@ -17,3 +16,13 @@ class User(Base):
     hashed_password = Column(String(250), nullable=False)
     session_id = Column(String(250), nullable=True)
     reset_token = Column(String(250), nullable=True)
+
+    def __init__(self, email: str, hashed_password: str):
+        """Initialize User instance
+
+        Args:
+            email: User's email address
+            hashed_password: Hashed password for the user
+        """
+        self.email = email
+        self.hashed_password = hashed_password
