@@ -3,12 +3,15 @@
 """
 from flask import request
 from typing import List, TypeVar
+import os
 
 
 class Auth:
     """Template for all authentication systems"""
 
-    def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
+    def require_auth(
+        self, path: str, excluded_paths: List[str]
+    ) -> bool:
         """Determine if authentication is required
 
         Args:
@@ -50,7 +53,9 @@ class Auth:
         # If path not found in excluded_paths, return True (requires auth)
         return True
 
-    def authorization_header(self, request=None) -> str:
+    def authorization_header(
+        self, request=None
+    ) -> str:
         """Get the authorization header from the request
 
         Args:
@@ -65,7 +70,9 @@ class Auth:
         # Return the Authorization header value if it exists
         return request.headers.get('Authorization', None)
 
-    def current_user(self, request=None) -> TypeVar('User'):
+    def current_user(
+        self, request=None
+    ) -> TypeVar('User'):
         """Get the current user from the request
 
         Args:
@@ -75,3 +82,19 @@ class Auth:
             None for now (will be implemented later)
         """
         return None
+
+    def session_cookie(self, request=None):
+        """Get session cookie value from request"""
+        if request is None:
+            return None
+
+        # More explicit environment variable handling
+        session_name = os.environ.get('SESSION_NAME')
+        if session_name is None:
+            session_name = '_my_session_id'
+
+        # Extra safety check for cookies attribute
+        if not hasattr(request, 'cookies'):
+            return None
+
+        return request.cookies.get(session_name)
