@@ -84,8 +84,9 @@ class DB:
         user = self.find_user_by(id=user_id)
 
         # List of valid user attributes
-        valid_attributes = ['email', 
-            'hashed_password', 'session_id', 'reset_token']
+        valid_attributes = [
+            'email','hashed_password', 'session_id', 'reset_token'
+        ]
 
         # Check if all kwargs are valid user attributes
         for key in kwargs:
