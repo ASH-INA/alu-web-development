@@ -118,7 +118,9 @@ def update_password() -> str:
 
     # Check if all required fields are provided
     if not email or not reset_token or not new_password:
-        return jsonify({"message": "email, reset_token, and new_password required"}), 403
+        return jsonify(
+            {"message": "email, reset_token, and new_password required"}
+        ), 403
 
     try:
         # Update the password using the reset token
