@@ -62,7 +62,7 @@ def login() -> str:
 
     # Create session for user
     session_id = AUTH.create_session(email)
-    
+
     # Create response
     response = make_response(jsonify({
         "email": email,
