@@ -10,21 +10,13 @@ AUTH = Auth()
 
 @app.route('/', methods=['GET'], strict_slashes=False)
 def welcome() -> str:
-    """Welcome route
-
-    Returns:
-        JSON welcome message
-    """
+    """Welcome route"""
     return jsonify({"message": "Bienvenue"})
 
 
 @app.route('/users', methods=['POST'], strict_slashes=False)
 def users() -> str:
-    """Register a new user
-
-    Returns:
-        JSON response indicating success or failure
-    """
+    """Register a new user"""
     email = request.form.get('email')
     password = request.form.get('password')
 
@@ -38,87 +30,62 @@ def users() -> str:
             "message": "user created"
         })
     except ValueError:
-        return jsonify({
-            "message": "email already registered"
-        }), 400
+        return jsonify({"message": "email already registered"}), 400
 
 
 @app.route('/sessions', methods=['POST'], strict_slashes=False)
 def login() -> str:
-    """User login route
-
-    Returns:
-        JSON response with login status and session cookie
-    """
+    """User login route"""
     email = request.form.get('email')
     password = request.form.get('password')
 
     if not email or not password:
         abort(401)
 
-    # Validate login credentials
     if not AUTH.valid_login(email, password):
         abort(401)
 
-    # Create session for user
     session_id = AUTH.create_session(email)
-
-    # Create response
     response = make_response(jsonify({
         "email": email,
         "message": "logged in"
     }))
-
-    # Set session cookie
     response.set_cookie('session_id', session_id)
-
     return response
 
 
 @app.route('/sessions', methods=['DELETE'], strict_slashes=False)
 def logout() -> str:
-    """User logout route
-
-    Returns:
-        Redirect to home page or 403 error
-    """
+    """User logout route"""
     session_id = request.cookies.get('session_id')
-    
+
     if not session_id:
         abort(403)
 
-    # Find user by session ID
     user = AUTH.get_user_from_session_id(session_id)
 
     if user:
-        # Destroy the session
         AUTH.destroy_session(user.id)
-        # Redirect to home page
         return redirect('/')
     else:
-        # User not found
         abort(403)
 
 
 @app.route('/profile', methods=['GET'], strict_slashes=False)
 def profile() -> str:
-    """User profile route
-
-    Returns:
-        JSON response with user email or 403 error
-    """
+    """User profile route"""
     session_id = request.cookies.get('session_id')
 
-    if not session_id:
+    # Check if session_id exists and is not empty
+    if session_id is None:
         abort(403)
 
-    # Find user by session ID
     user = AUTH.get_user_from_session_id(session_id)
 
-    if user:
-        return jsonify({"email": user.email})
-    else:
+    if user is None:
         abort(403)
+
+    return jsonify({"email": user.email})
 
 
 if __name__ == "__main__":
