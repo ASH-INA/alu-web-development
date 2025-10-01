@@ -61,7 +61,7 @@ def logout() -> str:
 
     if not session_id:
         abort(403)
-
+    
     user = AUTH.get_user_from_session_id(session_id)
 
     if user:
@@ -76,7 +76,6 @@ def profile() -> str:
     """User profile route"""
     session_id = request.cookies.get('session_id')
 
-    # Check if session_id exists and is not empty
     if session_id is None:
         abort(403)
 
@@ -86,6 +85,28 @@ def profile() -> str:
         abort(403)
 
     return jsonify({"email": user.email})
+
+
+@app.route('/reset_password', methods=['POST'], strict_slashes=False)
+def get_reset_password_token() -> str:
+    """Generate reset password token
+
+    Returns:
+        JSON response with reset token or error
+    """
+    email = request.form.get('email')
+
+    if not email:
+        return jsonify({"message": "email required"}), 403
+
+    try:
+        reset_token = AUTH.get_reset_password_token(email)
+        return jsonify({
+            "email": email,
+            "reset_token": reset_token
+        })
+    except ValueError:
+        return jsonify({"message": "email not registered"}), 403
 
 
 if __name__ == "__main__":
