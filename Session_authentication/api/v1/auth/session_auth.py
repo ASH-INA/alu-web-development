@@ -4,6 +4,7 @@
 from api.v1.auth.auth import Auth
 import uuid
 from typing import TypeVar
+from models.user import User
 
 
 class SessionAuth(Auth):
@@ -51,3 +52,28 @@ class SessionAuth(Auth):
 
         # Use .get() to safely retrieve user_id from dictionary
         return self.user_id_by_session_id.get(session_id)
+
+    def current_user(self, request=None):
+        """Get User instance based on session cookie
+
+        Args:
+            request: The Flask request object
+
+        Returns:
+            User instance if found, None otherwise
+        """
+        if request is None:
+            return None
+
+        # Get session ID from cookie
+        session_id = self.session_cookie(request)
+        if session_id is None:
+            return None
+
+        # Get user ID from session ID
+        user_id = self.user_id_for_session_id(session_id)
+        if user_id is None:
+            return None
+
+        # Get User instance from database
+        return User.get(user_id)
