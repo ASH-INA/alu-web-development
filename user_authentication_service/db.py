@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+""" Database class for user authentication service
+"""
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import IntegrityError
+
+from user import Base, User
+
+
+class DB:
+    """Database class for handling user operations"""
+
+    def __init__(self):
+        """Initialize database connection and create tables"""
+        self._engine = create_engine("sqlite:///a.db", echo=True)
+        Base.metadata.drop_all(self._engine)
+        Base.metadata.create_all(self._engine)
+        self.__session = None
+
+    @property
+    def _session(self):
+        """Get database session"""
+        if self.__session is None:
+            DBSession = sessionmaker(bind=self._engine)
+            self.__session = DBSession()
+        return self.__session
+
+    def add_user(self, email: str, hashed_password: str) -> User:
+        """Add a new user to the database
+
+        Args:
+            email: User's email address
+            hashed_password: Hashed password for the user
+
+        Returns:
+            User object that was created
+        """
+        try:
+            # Create new user instance
+            new_user = User(email=email, hashed_password=hashed_password)
+
+            # Add to session and commit
+            self._session.add(new_user)
+            self._session.commit()
+
+            return new_user
+        except IntegrityError:
+            # Rollback in case of error
+            self._session.rollback()
+            raise
