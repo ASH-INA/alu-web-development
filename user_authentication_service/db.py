@@ -65,7 +65,7 @@ class DB:
                 raise NoResultFound("No user found with the given criteria")
             return user
         except NoResultFound:
-        # Re-raise NoResultFound when no user is found
-            raise   
+            # Re-raise NoResultFound when no user is found
+            raise
         except InvalidRequestError:
             raise InvalidRequestError("Invalid query arguments")
