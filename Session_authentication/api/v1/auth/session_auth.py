@@ -40,7 +40,7 @@ class SessionAuth(Auth):
 
         Args:
             session_id: Session ID to look up
-
+  
         Returns:
             User ID if session exists, None otherwise
         """
@@ -58,7 +58,7 @@ class SessionAuth(Auth):
 
         Args:
             request: The Flask request object
-
+  
         Returns:
             User instance if found, None otherwise
         """
@@ -77,3 +77,29 @@ class SessionAuth(Auth):
 
         # Get User instance from database
         return User.get(user_id)
+
+    def destroy_session(self, request=None):
+        """Destroy user session / logout
+
+        Args:
+            request: The Flask request object
+  
+        Returns:
+            True if session was destroyed, False otherwise
+        """
+        if request is None:
+            return False
+
+        # Get session ID from cookie
+        session_id = self.session_cookie(request)
+        if session_id is None:
+            return False
+
+        # Check if session ID exists in storage
+        user_id = self.user_id_for_session_id(session_id)
+        if user_id is None:
+            return False
+
+        # Delete session from storage
+        del self.user_id_by_session_id[session_id]
+        return True
