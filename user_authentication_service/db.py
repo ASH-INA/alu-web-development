@@ -85,7 +85,7 @@ class DB:
 
         # List of valid user attributes
         valid_attributes = [
-            'email','hashed_password', 'session_id', 'reset_token'
+            'email','hashed_password','session_id','reset_token'
         ]
 
         # Check if all kwargs are valid user attributes
