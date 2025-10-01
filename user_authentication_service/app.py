@@ -71,7 +71,7 @@ def login() -> str:
 
     # Set session cookie
     response.set_cookie('session_id', session_id)
-    
+
     return response
 
 
