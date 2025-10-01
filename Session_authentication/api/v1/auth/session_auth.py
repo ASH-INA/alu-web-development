@@ -40,7 +40,7 @@ class SessionAuth(Auth):
 
         Args:
             session_id: Session ID to look up
-  
+
         Returns:
             User ID if session exists, None otherwise
         """
@@ -58,7 +58,7 @@ class SessionAuth(Auth):
 
         Args:
             request: The Flask request object
-  
+
         Returns:
             User instance if found, None otherwise
         """
@@ -83,7 +83,7 @@ class SessionAuth(Auth):
 
         Args:
             request: The Flask request object
-  
+
         Returns:
             True if session was destroyed, False otherwise
         """
