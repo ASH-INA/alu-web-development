@@ -15,16 +15,16 @@ def login():
     password = request.form.get('password')
 
     # Check if email is missing or empty
-    if email is None or email == '':
+    if not email:
         return jsonify({"error": "email missing"}), 400
 
     # Check if password is missing or empty
-    if password is None or password == '':
+    if not password:
         return jsonify({"error": "password missing"}), 400
 
     # Search for user by email
     users = User.search({'email': email})
-    if not users or len(users) == 0:
+    if not users:
         return jsonify({"error": "no user found for this email"}), 404
 
     user = users[0]
@@ -38,6 +38,8 @@ def login():
 
     # Create session for user
     session_id = auth.create_session(user.id)
+    if session_id is None:
+        return jsonify({"error": "failed to create session"}), 500
 
     # Create response with user data
     response = make_response(user.to_json())
@@ -47,3 +49,17 @@ def login():
     response.set_cookie(session_name, session_id)
 
     return response
+
+
+@app_views.route('/auth_session/logout', methods=['DELETE'], strict_slashes=False)
+def logout():
+    """Handle user logout and destroy session"""
+    # Import auth here to avoid circular imports
+    from api.v1.app import auth
+
+    # Destroy the session
+    if not auth.destroy_session(request):
+        abort(404)
+
+    # Return empty JSON response
+    return jsonify({}), 200
