@@ -83,7 +83,7 @@ def logout() -> str:
         Redirect to home page or 403 error
     """
     session_id = request.cookies.get('session_id')
-
+    
     if not session_id:
         abort(403)
 
@@ -97,6 +97,27 @@ def logout() -> str:
         return redirect('/')
     else:
         # User not found
+        abort(403)
+
+
+@app.route('/profile', methods=['GET'], strict_slashes=False)
+def profile() -> str:
+    """User profile route
+
+    Returns:
+        JSON response with user email or 403 error
+    """
+    session_id = request.cookies.get('session_id')
+
+    if not session_id:
+        abort(403)
+
+    # Find user by session ID
+    user = AUTH.get_user_from_session_id(session_id)
+
+    if user:
+        return jsonify({"email": user.email})
+    else:
         abort(403)
 
 
