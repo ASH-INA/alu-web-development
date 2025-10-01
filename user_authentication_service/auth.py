@@ -79,7 +79,7 @@ class Auth:
             # Check if password matches
             password_bytes = password.encode('utf-8')
             hashed_password_bytes = user.hashed_password.encode('utf-8')
-            
+
             return bcrypt.checkpw(password_bytes, hashed_password_bytes)
 
         except NoResultFound:
